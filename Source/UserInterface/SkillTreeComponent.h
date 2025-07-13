@@ -11,6 +11,7 @@ enum class ESkillState : uint8
   Unlocked,
   Purchased
 };
+
 /*
  Since the skills that are unlocked might not apply any change to the character
  I've decided to make the Skill Node a struct, since it will make everything

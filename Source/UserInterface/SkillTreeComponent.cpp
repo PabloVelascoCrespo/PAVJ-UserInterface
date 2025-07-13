@@ -36,10 +36,9 @@ bool USkillTreeComponent::Purchase(const FName& _ID)
   Node->State = ESkillState::Purchased;
 
   // Updating all the dependencies
-  // it has 3 conditions
-  //  1.- Same Branch (you only can unlock a node if it belongs to the same branch)
-  //  2.- That node has as prerequisite the current Node
-  //  3.- That node is locked
+  // it has 2 conditions
+  //  1.- That node has as prerequisite the current Node
+  //  2.- That node is locked (it makes no sense to unlock an already unlocked node)
   for (FSkillNode& Dep : SkillNodes)
   {
     if (Dep.Prerequisites.Contains(_ID) && Dep.State == ESkillState::Locked)
@@ -52,6 +51,7 @@ bool USkillTreeComponent::Purchase(const FName& _ID)
 
 FSkillNode* USkillTreeComponent::GetNode(const FName& _ID)
 {
+  // Getting a node by it's ID
   FSkillNode* Node = SkillNodes.FindByPredicate(
     [&](FSkillNode& N)
     {
@@ -63,6 +63,7 @@ FSkillNode* USkillTreeComponent::GetNode(const FName& _ID)
 
 const FSkillNode* USkillTreeComponent::GetNode(const FName& _ID) const
 {
+  // Getting a constant node by it's ID
   const FSkillNode* Node = SkillNodes.FindByPredicate(
     [&](FSkillNode& N)
     {
@@ -76,6 +77,7 @@ void USkillTreeComponent::BeginPlay()
 {
   Super::BeginPlay();
 
+  // Unlocking the Nodes that have no Prerequisites
   for (auto& Node : SkillNodes)
   {
     if (Node.Prerequisites.Num() == 0)

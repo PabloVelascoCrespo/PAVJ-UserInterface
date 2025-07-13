@@ -13,16 +13,19 @@ void USkillTreeUserWidget::RefreshTree()
     return;
   }
 
+  // Setting up the Remaining Points in the Widget, so the player can now how many points has left
   if (RemainingPointsText)
   {
     RemainingPointsText->SetText(FText::AsNumber(SkillComponent->RemainingPoints));
   }
 
+  // Just in case deleting all the children in the boxes before filling it dynamically
   for (UVerticalBox* BranchBox : BranchBoxes)
   {
     BranchBox->ClearChildren();
   }
 
+  // Dynamically filling the SkillTree, setting up the Skill Buttons and binding the delegate for when the Node is being purchased
   for (const FSkillNode& Node : SkillComponent->SkillNodes)
   {
     int32 BranchIndex = Node.BranchIndex;
@@ -38,6 +41,7 @@ void USkillTreeUserWidget::RefreshTree()
 
 void USkillTreeUserWidget::OnNodeConfirmed(const FName& _NodeID)
 {
+  // Just in case the node has been unlocked already
   const FSkillNode* Node = SkillComponent->GetNode(_NodeID);
   if (!Node || Node->State != ESkillState::Unlocked && GetOwningPlayer())
   {
@@ -45,6 +49,7 @@ void USkillTreeUserWidget::OnNodeConfirmed(const FName& _NodeID)
     return;
   }
 
+  // Popping up the Modal window so the player can confirm if he wants the skill or not
   UConfirmPurchaseWidget* Modal = CreateWidget<UConfirmPurchaseWidget>(this, ConfirmWidgetClass);
   Modal->Setup(Node->Name, Node->Cost);
   Modal->OnConfirmed.AddLambda([this, _NodeID]()
@@ -52,7 +57,7 @@ void USkillTreeUserWidget::OnNodeConfirmed(const FName& _NodeID)
       bool bOk = SkillComponent->Purchase(_NodeID);
       RefreshTree();
       if (!bOk && GetOwningPlayer())
-      {
+      { // In case the player doesn't have enough points showing a message explaining why he didn't get the skill
         FeedBackText->SetText(FText::FromString("You don't have enough points!"));
       }
     });
@@ -62,6 +67,8 @@ void USkillTreeUserWidget::OnNodeConfirmed(const FName& _NodeID)
 void USkillTreeUserWidget::NativeConstruct()
 {
   Super::NativeConstruct();
+ 
+  // Setting up the Widget
   BranchBoxes.Add(BranchBox_0);
   BranchBoxes.Add(BranchBox_1);
   BranchBoxes.Add(BranchBox_2);

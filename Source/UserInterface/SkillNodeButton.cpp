@@ -27,6 +27,7 @@ void USkillNodeButton::Setup(const FSkillNode& _Node)
 
   RootButton->SetBackgroundColor(Color);
 
+  // Setting the button enabled or disabled dependingg on the State of the Skill
   switch (_Node.State)
   {
   case ESkillState::Locked:
@@ -54,6 +55,8 @@ bool USkillNodeButton::Initialize()
   {
     return false;
   }
+
+  // Setting up the Delegate for when the button is clicked
   RootButton->OnClicked.AddDynamic(this, &USkillNodeButton::HandleRootButtonClicked);
   return true;
 }

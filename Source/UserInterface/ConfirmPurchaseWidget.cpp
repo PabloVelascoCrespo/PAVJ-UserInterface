@@ -4,6 +4,7 @@
 
 void UConfirmPurchaseWidget::Setup(const FText& InSkillName, int32 InCost)
 {
+  // Setting up the Message that will pop up when this window appears.
   SkillName = InSkillName;
   Cost = InCost;
 
@@ -23,6 +24,7 @@ void UConfirmPurchaseWidget::NativeConstruct()
 {
   Super::NativeConstruct();
 
+  // Setting up the delegates of Confiming or Canceling the purchase.
   if (ConfirmButton)
   {
     ConfirmButton->OnClicked.AddDynamic(this, &UConfirmPurchaseWidget::HandleConfirmClicked);
@@ -36,6 +38,7 @@ void UConfirmPurchaseWidget::NativeConstruct()
 
 void UConfirmPurchaseWidget::HandleConfirmClicked()
 {
+  // Broadcast on purchase confirmed and removing the widget
   OnConfirmed.Broadcast();
   RemoveFromParent();
 }
